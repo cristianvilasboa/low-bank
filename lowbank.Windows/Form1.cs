@@ -2,21 +2,30 @@ namespace lowbank.Windows
 {
     public partial class Form1 : Form
     {
-        List<Account> accounts;
+        List<Account> accounts = new List<Account>();
 
         public Form1()
         {
             InitializeComponent();
-            Account contaDoCristian = new Account(123, "Cristian");
-            Account contaDoFelipe = new Account(456, "Felipe");
-            Account contaDoGuilherme = new Account(789, "Guilherme");
+            LoadData();
+        }
 
-            accounts = new List<Account>();
+        private void LoadData()
+        {
+            string dir = @"C:\CrisCode\LowBank\low-bank\lowbank.Windows\data.csv";
 
-            accounts.Add(contaDoCristian);
-            accounts.Add(contaDoFelipe);
-            accounts.Add(contaDoGuilherme);
+            string[] linhas = File.ReadAllLines(dir);
 
+            // Loop para ler cada linha
+
+            for (int i = 1; i < linhas.Length; i++)
+            {
+                string linhaAtual = linhas[i];
+
+                // Adicionar nova conta na lista "Accounts"
+
+                accounts.Add(Account.Parse(linhaAtual));
+            }
         }
 
         private void loadbutton_Click(object sender, EventArgs e)
@@ -28,9 +37,19 @@ namespace lowbank.Windows
             for (int i = 0; i < accounts.Count; i++)
             {
                 Account contaAtual = accounts[i];
-                if (contaAtual.Id == id)
+                bool contaPesquisada = contaAtual.Id == id;
+
+                if (contaPesquisada)
                 {
-                    amountLabel.Text = "Saldo em conta: R$ " + contaAtual.Amount;
+                    textBoxConta.Text = $"{contaAtual.Id}";
+                    textBoxNome.Text = contaAtual.Name;
+                    textBoxCpf.Text = contaAtual.Cpf;
+                    textBoxEmail.Text = contaAtual.Email;
+                    textBoxTelefone.Text = contaAtual.Telefone;
+                    textBoxSaldo.Text = $"R$ {contaAtual.Amount}";
+
+                    amountLabel.Text = $"{contaAtual.Name} seu saldo em conta é de R$ {contaAtual.Amount}";
+                    break;
                 }
             }
         }
@@ -49,12 +68,20 @@ namespace lowbank.Windows
             else
             {
                 e.Handled = true;
-            }
+            }           
         }
 
-        private void Form1_Load(object sender, EventArgs e)
+        private void textBoxTelefone_TextChanged(object sender, EventArgs e)
         {
 
         }
+
+        private void cadastrarbutton_Click(object sender, EventArgs e)
+        {
+            Form2 f2 = new Form2();
+            f2.ShowDialog();
+
+        }
+
     }
 }
